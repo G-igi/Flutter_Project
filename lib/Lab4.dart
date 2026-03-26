@@ -10,7 +10,6 @@ class MyApp extends StatefulWidget{
   State<MyApp> createState() => _MyAppState();
 }
 
-
 class _MyAppState extends State<MyApp> {
 
   List<Task> tasks = [
@@ -23,20 +22,21 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
   return MaterialApp(
-    title: 'Moje Zadania',
+    title: 'Dziesiejsze Zadania',
     home: Scaffold(
       appBar: AppBar(
-        title: const Text('Moje Zadania'),
+        title: const Text('Dziesiejsze Zadania', style: TextStyle( fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red)),
         backgroundColor: Colors.blue[800],
         foregroundColor: Colors.white,
     ),
+
     body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           final task = tasks[index];
           return ListTile(
-            title: Text(task.title),
-            subtitle: Text('Termin: ${task.deadline}'),
+            title: TaskCard(title: task.title,),
+            subtitle: TaskCard(title: 'Termin: ${task.deadline}'),
           );
     },
     ),
@@ -51,4 +51,15 @@ class Task{
   Task({required this.title, required this.deadline});
 }
 
+class TaskCard extends StatelessWidget {
+  final String title;
+  const TaskCard({ super.key,  required this.title });
 
+  @override Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+          title: Text(title),
+      )
+    );
+  }
+}
