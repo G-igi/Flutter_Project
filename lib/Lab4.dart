@@ -58,7 +58,7 @@ class TaskCard extends StatelessWidget {
   @override Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-          title: Text(title),
+          title: Text(title, textAlign: TextAlign.center, style: TextStyle(wordSpacing: 5)),
       )
     );
   }
