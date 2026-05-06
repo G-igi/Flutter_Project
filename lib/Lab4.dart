@@ -358,7 +358,7 @@ class EditTaskScreen extends StatelessWidget {
 
                 Navigator.pop(context, updatedTask);
               },
-              child: Text("Zapisz zmiany"),
+              child: Text("Zapisz wszytskie zmiany"),
             ),
           ],
         ),
