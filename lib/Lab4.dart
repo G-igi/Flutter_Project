@@ -100,11 +100,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }
             },
-            title: Text(task.title),
-            subtitle: Text("${task.deadline} | ${task.priority}"),
-            trailing: Icon(
-              task.done ? Icons.check : Icons.close,
+
+            leading: Checkbox(
+              value: task.done,
+              onChanged: (value) {
+                setState(() {
+                  task.done = value!;
+                });
+              },
             ),
+
+            title: Text(task.title,
+            style: TextStyle(
+              decoration: task.done
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none,
+              color: task.done ? Colors.grey : Colors.black,
+            ),
+            ),
+            subtitle: Text("${task.deadline} | ${task.priority}"),
+
           ),
           );
         },
