@@ -12,13 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'KrakFlow'),
+
+      home: Column(children: [Text("1"), Text("2")]),
     );
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -63,4 +62,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
 }
