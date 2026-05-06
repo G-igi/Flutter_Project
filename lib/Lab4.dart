@@ -18,19 +18,17 @@ class _MyAppState extends State<MyApp> {
     Task(title: "Przeczytać o Window Sliding", deadline: "jurto"),
     Task(title: "Kupić bulki", deadline: "jutro"),
   ];
-
   @override
   Widget build(BuildContext context) {
   return MaterialApp(
     title: 'Dziesiejsze Zadania',
     home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Dziesiejsze Zadania', style: TextStyle( fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red)),
+      appBar:    AppBar(
+        title: Column(children: [Text("Masz dziś ${tasks.length} zadania"),SizedBox(height: 4), const Text('Dziesiejsze Zadania', style: TextStyle( fontSize: 22, fontWeight: FontWeight.bold, color: Colors.red))]),
         backgroundColor: Colors.blue[800],
         foregroundColor: Colors.white,
-    ),
-
-    body: ListView.builder(
+      ),
+      body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           final task = tasks[index];
