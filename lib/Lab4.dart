@@ -73,12 +73,26 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           final task = TaskRepository.tasks[index];
 
-          return ListTile(
+          return Dismissible(key: ValueKey(task.title),direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            final removedTitle = task.title;
+
+            setState(() {
+              TaskRepository.tasks.remove(task);
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Usunięto zadanie: $removedTitle"),
+              ),
+            );
+          },
+          child ListTile(
             title: Text(task.title),
             subtitle: Text("${task.deadline} | ${task.priority}"),
             trailing: Icon(
               task.done ? Icons.check : Icons.close,
             ),
+          ),
           );
         },
       ),
@@ -151,6 +165,7 @@ class AddTaskScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              //callback
               onPressed: () {
                 final newTask = Task(
                   title: titleController.text,
