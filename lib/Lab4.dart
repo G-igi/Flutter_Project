@@ -59,70 +59,157 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String selectedFilter = "wszystkie";
+
+
   @override
   Widget build(BuildContext context) {
+    List<Task> filteredTasks = TaskRepository.tasks;
+
+    if (selectedFilter == "wykonane") {
+      filteredTasks = TaskRepository.tasks
+          .where((task) => task.done)
+          .toList();
+    } else if (selectedFilter == "do zrobienia") {
+      filteredTasks = TaskRepository.tasks
+          .where((task) => !task.done)
+          .toList();
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text("KrakFlow"),
       ),
-      body: ListView.builder(
-        itemCount: TaskRepository.tasks.length,
-        itemBuilder: (context, index) {
-          final task = TaskRepository.tasks[index];
-
-          return Dismissible(
-            key: ValueKey(task.title),
-            direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              final removedTitle = task.title;
-
-            setState(() {
-              TaskRepository.tasks.remove(task);
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Usunięto zadanie: $removedTitle"),
-              ),
-            );
-          },
-          child: ListTile(
-            onTap: () async {
-              final Task? updatedTask = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditTaskScreen(task: task),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              "Masz dziś ${TaskRepository.tasks.length} zadania",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selectedFilter = "wszystkie";
+                  });
+                },
+                child: Text(
+                  "Wszystkie",
+                  style: TextStyle(
+                    color: selectedFilter == "wszystkie"
+                        ? Colors.blue
+                        : Colors.grey,
+                    fontWeight: selectedFilter == "wszystkie"
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
                 ),
-              );
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selectedFilter = "do zrobienia";
+                  });
+                },
+                child: Text(
+                  "Do zrobienia",
+                  style: TextStyle(
+                    color: selectedFilter == "do zrobienia"
+                        ? Colors.blue
+                        : Colors.grey,
+                    fontWeight: selectedFilter == "do zrobienia"
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selectedFilter = "wykonane";
+                  });
+                },
+                child: Text(
+                  "Wykonane",
+                  style: TextStyle(
+                    color: selectedFilter == "wykonane"
+                        ? Colors.blue
+                        : Colors.grey,
+                    fontWeight: selectedFilter == "wykonane"
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredTasks.length,
+              itemBuilder: (context, index) {
+                final task = filteredTasks[index];
 
-              if (updatedTask != null){
-                setState(() {
-                  TaskRepository.tasks[index] = updatedTask;
-                });
-              }
-            },
+                return Dismissible(
+                  key: ValueKey(task.title),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    final removedTitle = task.title;
 
-            leading: Checkbox(
-              value: task.done,
-              onChanged: (value) {
-                setState(() {
-                  task.done = value!;
-                });
+                    setState(() {
+                      TaskRepository.tasks.remove(task);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Usunięto zadanie: $removedTitle"),
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    onTap: () async {
+                      final Task? updatedTask = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditTaskScreen(task: task),
+                        ),
+                      );
+
+                      if (updatedTask != null) {
+                        setState(() {
+                          TaskRepository.tasks[
+                          TaskRepository.tasks.indexOf(task)] = updatedTask;
+                        });
+                      }
+                    },
+                    leading: Checkbox(
+                      value: task.done,
+                      onChanged: (value) {
+                        setState(() {
+                          task.done = value!;
+                        });
+                      },
+                    ),
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        decoration: task.done
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        color: task.done ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                    subtitle: Text("${task.deadline} | ${task.priority}"),
+                  ),
+                );
               },
             ),
-
-            title: Text(task.title,
-            style: TextStyle(
-              decoration: task.done
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
-              color: task.done ? Colors.grey : Colors.black,
-            ),
-            ),
-            subtitle: Text("${task.deadline} | ${task.priority}"),
-
           ),
-          );
-        },
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
