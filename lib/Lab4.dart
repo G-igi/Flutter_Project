@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-
-
-
 void main() {
   runApp( MyApp());
 }
@@ -73,9 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           final task = TaskRepository.tasks[index];
 
-          return Dismissible(key: ValueKey(task.title),direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-            final removedTitle = task.title;
+          return Dismissible(
+            key: ValueKey(task.title),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              final removedTitle = task.title;
 
             setState(() {
               TaskRepository.tasks.remove(task);
@@ -86,7 +85,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child ListTile(
+          child: ListTile(
+            onTap: () async {
+              final Task? updatedTask = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditTaskScreen(task: task),
+                ),
+              );
+
+              if (updatedTask != null){
+                setState(() {
+                  TaskRepository.tasks[index] = updatedTask;
+                });
+              }
+            },
             title: Text(task.title),
             subtitle: Text("${task.deadline} | ${task.priority}"),
             trailing: Icon(
@@ -174,9 +187,76 @@ class AddTaskScreen extends StatelessWidget {
                   done: false,
                 );
 
-                Navigator.pop(context, newTask);
+                Navigator.pop(context,  newTask);
               },
-              child: Text("Zapisz"),
+              child: Text("Zapisz zmiany"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class EditTaskScreen extends StatelessWidget {
+  final Task task;
+
+  EditTaskScreen({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController titleController =
+    TextEditingController(text: task.title);
+    final TextEditingController deadlineController =
+    TextEditingController(text: task.deadline);
+    final TextEditingController priorityController =
+    TextEditingController(text: task.priority);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Edytuj zadanie"),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                labelText: "Tytuł",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: deadlineController,
+              decoration: InputDecoration(
+                labelText: "Termin",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: priorityController,
+              decoration: InputDecoration(
+                labelText: "Priorytet",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                final updatedTask = Task(
+                  title: titleController.text,
+                  deadline: deadlineController.text,
+                  priority: priorityController.text,
+                  done: task.done,
+                );
+
+                Navigator.pop(context, updatedTask);
+              },
+              child: Text("Zapisz zmiany"),
             ),
           ],
         ),
