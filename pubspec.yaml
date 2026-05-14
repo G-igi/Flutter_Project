@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: 2.5.3
+  hive_ce: 2.19.3
+  hive_ce_flutter: 2.3.3
 
   http: ^1.2.0
 
